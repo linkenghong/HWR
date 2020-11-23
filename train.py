@@ -60,7 +60,7 @@ def train(epoch, model, criterion, optimizer, train_loader, save_iter=100):
             total = 0
             correct = 0
             sum_loss = 0.0
-    print("running time: %s"%(time.time - start_time))
+    print("running time: %s"%(time.time() - start_time))
 
 if __name__ == "__main__":
     # 超参数
