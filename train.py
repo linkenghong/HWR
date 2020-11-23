@@ -9,6 +9,7 @@ import pickle
 from PIL import Image
 from model import HWDB_GoogLeNet
 from hwdb import HWDB
+import time
 
 def valid(epoch, model, test_loarder):
     print("epoch %d 开始验证..." % epoch)
@@ -34,6 +35,7 @@ def train(epoch, model, criterion, optimizer, train_loader, save_iter=100):
     sum_loss = 0.0
     total = 0
     correct = 0
+    start_time = time.time()
 
     for i, (inputs, labels) in enumerate(train_loader):
         optimizer.zero_grad()
@@ -58,6 +60,7 @@ def train(epoch, model, criterion, optimizer, train_loader, save_iter=100):
             total = 0
             correct = 0
             sum_loss = 0.0
+    print("running time: %s"%(time.time - start_time))
 
 if __name__ == "__main__":
     # 超参数
@@ -87,9 +90,10 @@ if __name__ == "__main__":
     trainloader, testloader = dataset.get_loader(batch_size, num_workers = 8, pin_memory = True)
 
     model = HWDB_GoogLeNet(num_classes)
-    if torch.cuda.is_available():
+    if torch.cuda.is_available() and torch.cuda.device_count() > 1:
+        model = nn.DataParallel(model)
         model = model.cuda()
-    model.load_state_dict(torch.load('checkpoints/HWDB_GoogLeNet_iter_825.pth'))
+    model.module.load_state_dict(torch.load('checkpoints/HWDB_GoogLeNet_iter_827.pth'))
 
     #####################################################################################
     # 减少种类后
@@ -110,8 +114,8 @@ if __name__ == "__main__":
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=lr)
 
-    for epoch in range(826, epochs):
+    for epoch in range(828, epochs):
         train(epoch, model, criterion, optimizer, trainloader)
         valid(epoch, model, testloader)
         print("epoch%d 结束, 正在保存模型..." % epoch)
-        torch.save(model.state_dict(), pth_path + 'HWDB_GoogLeNet_iter_%d.pth' % epoch)
+        torch.save(model.module.state_dict(), pth_path + 'HWDB_GoogLeNet_iter_%d.pth' % epoch)
