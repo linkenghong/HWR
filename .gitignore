@@ -4,6 +4,7 @@ checkpoints_useless/
 d.txt
 pretrained_dict
 *.ipynb
+*.zip
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -114,7 +114,7 @@ if __name__ == "__main__":
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=lr)
 
-    for epoch in range(826, epochs):
+    for epoch in range(828, epochs):
         train(epoch, model, criterion, optimizer, trainloader)
         valid(epoch, model, testloader)
         print("epoch%d 结束, 正在保存模型..." % epoch)
